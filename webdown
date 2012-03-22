@@ -72,19 +72,20 @@ for SFILE in $(find "$SRC" -name '*.markdown' -type f); do
 
 	if [[ -n "$LCONTENT" ]]; then
 		MARKDOWN=$(sundown $SFILE)
+
 		CONTENT=$LCONTENT
 		CONTENT=${CONTENT/\{\{ CONTENT \}\}/$MARKDOWN}
+
+		CTITLE=$(head -n1 "$SFILE")
+
+		if [[ (-n "$TITLE") && ("$CTITLE" != "$TITLE") ]]; then
+			CTITLE="$CTITLE $TITLE_SEPARATOR $TITLE"
+		fi
+
+		CONTENT=${CONTENT/\{\{ TITLE \}\}/$CTITLE}
 	else
 		CONTENT=$(sundown $SFILE)
 	fi
-
-	CTITLE=$(head -n1 "$SFILE")
-
-	if [[ (-n "$TITLE") && ("$CTITLE" != "$TITLE") ]]; then
-		CTITLE="$CTITLE $TITLE_SEPARATOR $TITLE"
-	fi
-
-	CONTENT=${CONTENT/\{\{ TITLE \}\}/$CTITLE}
 
 	echo "$CONTENT" > $DFILE
 done
