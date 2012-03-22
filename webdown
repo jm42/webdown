@@ -1,0 +1,88 @@
+#!/usr/bin/env sh
+#
+# webdown: static website generator from markdown sources
+#
+
+VERSION=0.1
+LAYOUT=
+TITLE=
+
+if [[ ! -x /usr/bin/sundown ]]; then
+	echo "Please install 'sundown' to use ${0##*/}"
+	exit 1
+fi
+
+version()
+{
+	echo "${0##*/} v$VERSION"
+}
+
+usage()
+{
+	cat >&2 << EOF
+usage: ${0##*/} [options] source destination
+
+options:
+  -l, --layout file       Layout for each generated page
+  -t, --title string      Page title
+  -h, --help              Display this message
+  -V, --version           Print version and exit
+EOF
+	exit ${1:-1}
+}
+
+argv=$(getopt -l 'help,version,layout:,title:' -- 'hVl:t:' "$@") || usage
+eval set -- "$argv"
+
+while true ; do
+	case "$1" in
+		-l|--layout)  LAYOUT="$2" ; shift 2 ;;
+		-t|--title)   TITLE="$2" ; shift 2 ;;
+
+		-h|--help)    usage 0 2>&1 ;;
+		-V|--version) version ; exit ;;
+
+		--)           shift ; break ;;
+		*)            usage ;;
+	esac
+done
+
+[[ $# -eq 2 ]] || usage
+
+SRC=$(readlink -f $1)
+DST=$(readlink -f $2)
+
+[[ -d "$SRC" ]] || (echo "Invalid source directory" ; exit 1)
+[[ -d "$DST" ]] || (echo "Invalid destination directory" ; exit 1)
+
+if [[ -f "$LAYOUT" ]]; then
+	LCONTENT=$(cat $LAYOUT)
+fi
+
+for SFILE in $(find "$SRC" -name '*.markdown' -type f); do
+	DFILE=${SFILE/$SRC/$DST}
+	DFILE=${DFILE/%markdown/html}
+
+	mkdir -p $(dirname $DFILE)
+
+	if [[ -n "$LCONTENT" ]]; then
+		MARKDOWN=$(sundown $SFILE)
+		CONTENT=$LCONTENT
+		CONTENT=${CONTENT/\{\{ CONTENT \}\}/$MARKDOWN}
+	else
+		CONTENT=$(sundown $SFILE)
+	fi
+
+	CTITLE=$(head -n1 "$SFILE")
+
+	if [[ (-n "$TITLE") && ("$CTITLE" != "$TITLE") ]]; then
+		CTITLE="$CTITLE | $TITLE"
+	fi
+
+	CONTENT=${CONTENT/\{\{ TITLE \}\}/$CTITLE}
+
+	echo "$CONTENT" > $DFILE
+done
+
+# End of file
+# vim: set ts=2 sw=2 noet:
