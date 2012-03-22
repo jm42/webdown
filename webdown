@@ -6,6 +6,7 @@
 VERSION=0.1
 LAYOUT=
 TITLE=
+TITLE_SEPARATOR="|"
 
 if [[ ! -x /usr/bin/sundown ]]; then
 	echo "Please install 'sundown' to use ${0##*/}"
@@ -23,27 +24,31 @@ usage()
 usage: ${0##*/} [options] source destination
 
 options:
-  -l, --layout file       Layout for each generated page
-  -t, --title string      Page title
-  -h, --help              Display this message
-  -V, --version           Print version and exit
+  -l, --layout file               Layout for each generated page
+  -t, --title string              Page title
+      --title-separator string    Title separator
+  -h, --help                      Display this message
+  -V, --version                   Print version and exit
 EOF
 	exit ${1:-1}
 }
 
-argv=$(getopt -l 'help,version,layout:,title:' -- 'hVl:t:' "$@") || usage
+LONG_OPTS="help,version,layout:,title:,title-separator:"
+
+argv=$(getopt -l "$LONG_OPTS" -- 'hVl:t:' "$@") || usage
 eval set -- "$argv"
 
 while true ; do
 	case "$1" in
-		-l|--layout)  LAYOUT="$2" ; shift 2 ;;
-		-t|--title)   TITLE="$2" ; shift 2 ;;
+		-l|--layout)             LAYOUT="$2" ; shift 2 ;;
+		-t|--title)              TITLE="$2" ; shift 2 ;;
+		   --title-separator)    TITLE_SEPARATOR="$2" ; shift 2 ;;
 
-		-h|--help)    usage 0 2>&1 ;;
-		-V|--version) version ; exit ;;
+		-h|--help)               usage 0 2>&1 ;;
+		-V|--version)            version ; exit ;;
 
-		--)           shift ; break ;;
-		*)            usage ;;
+		--)                      shift ; break ;;
+		*)                       usage ;;
 	esac
 done
 
@@ -76,7 +81,7 @@ for SFILE in $(find "$SRC" -name '*.markdown' -type f); do
 	CTITLE=$(head -n1 "$SFILE")
 
 	if [[ (-n "$TITLE") && ("$CTITLE" != "$TITLE") ]]; then
-		CTITLE="$CTITLE | $TITLE"
+		CTITLE="$CTITLE $TITLE_SEPARATOR $TITLE"
 	fi
 
 	CONTENT=${CONTENT/\{\{ TITLE \}\}/$CTITLE}
