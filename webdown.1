@@ -1,0 +1,38 @@
+.\" Man for webdown
+.\"
+.TH webdown 1 "May 2012"
+.SH "NAME"
+webdown \- static website generator from markdown sources
+.SH "SYNOPSIS"
+\&\fBfoo [\fIoptions\fB] \fIsource destination\fR
+.SH "DESCRIPTION"
+Creates HTML files into the \fIdestination\fR directory from the markdown
+files in the \fIsource\fR directory.
+.SH "OPTIONS"
+.IP "\fB-l, --layout \fIfile\fR"
+Use the HTML \fIfile\fR as layout.
+.IP "\fB-t, --title \fItitle\fR"
+Specifies the global \fItitle\fR to be used. It will replace the layout
+variable \fB{{ TITLE }}\fR with the format:
+
+    \fB{{ CURRENT_TITLE }} {{ SEPARATOR }} {{ GLOBAL_TITLE }}\fR
+
+If this parameter is not specified, no separator will be used, and the layout
+variable \fB{{ TITLE }}\fR will be replace with the title of the current
+procesing file.
+.IP "\fB--title-separator \fIseparator\fR"
+Separate the procesing page title and the given title by the parameter
+\fB-t\fR with \fIseparator\fR. Note that the separator is wrapped with one
+space of each side.
+
+If no one is specified, the charecter "|" (without quotes) will be used as
+title separator.
+.IP "\fB-h, --help\fR"
+Prints the synopsis and list the options.
+.IP "\fB-v, --version\fR"
+Prints the \fIwebdown\fR(1) version and exit.
+.SH "AUTHOR"
+Juan M Martínez <joksnet@gmail.com>
+.SH "SEE ALSO"
+\fBsundown\fR (https://github.com/tanoku/sundown)
+

@@ -25,22 +25,24 @@ if [[ ! -x /usr/bin/sundown ]]; then
 	exit 1
 fi
 
+# version {{{
 version()
 {
 	echo "${0##*/} v$VERSION"
 }
+# }}}
 
 usage()
 {
 	cat >&2 << EOF
-usage: ${0##*/} [options] source destination
+usage: ${0##*/} [options] <source> <destination>
 
 options:
-  -l, --layout file               Layout for each generated page
-  -t, --title string              Page title
-      --title-separator string    Title separator
-  -h, --help                      Display this message
-  -V, --version                   Print version and exit
+  -l, --layout <file>                  Layout for each generated page
+  -t, --title <title>                  Page title
+      --title-separator <separator>    Title separator
+  -h, --help                           Display this message
+  -V, --version                        Print version and exit
 EOF
 	exit ${1:-1}
 }
