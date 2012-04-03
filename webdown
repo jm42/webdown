@@ -16,6 +16,7 @@
 #
 
 VERSION=0.1
+QUIET=0
 LAYOUT=
 TITLE=
 TITLE_SEPARATOR="|"
@@ -39,6 +40,7 @@ options:
   -l, --layout <file>                  Layout for each generated page
   -t, --title <title>                  Page title
       --title-separator <separator>    Title separator
+  -q, --quiet                          Do not display any message
   -h, --help                           Display this message
   -V, --version                        Print version and exit
 EOF
@@ -47,7 +49,9 @@ EOF
 log()
 {
 	local msg=$1; shift
-	echo "$msg" "$@"
+	if [[ 0 == $QUIET ]]; then
+		echo "$msg" "$@"
+	fi
 }
 
 fatal()
@@ -57,9 +61,10 @@ fatal()
 	exit 1
 }
 
-LONG_OPTS="help,version,layout:,title:,title-separator:"
+SHORT_OPTS="qhVl:t:"
+LONG_OPTS="quiet,help,version,layout:,title:,title-separator:"
 
-argv=$(getopt -l "$LONG_OPTS" -- 'hVl:t:' "$@") || { usage ; exit 1 ; }
+argv=$(getopt -l "$LONG_OPTS" -- "$SHORT_OPTS" "$@") || { usage ; exit 1 ; }
 eval set -- "$argv"
 
 while true ; do
@@ -68,6 +73,7 @@ while true ; do
 		-t|--title)              TITLE="$2" ; shift 2 ;;
 		   --title-separator)    TITLE_SEPARATOR="$2" ; shift 2 ;;
 
+		-q|--quiet)              QUIET=1 ; shift ;;
 		-h|--help)               usage ; exit ;;
 		-V|--version)            version ; exit ;;
 
