@@ -44,6 +44,19 @@ options:
 EOF
 }
 
+log()
+{
+	local msg=$1; shift
+	echo "$msg" "$@"
+}
+
+fatal()
+{
+	local msg=$1; shift
+	log "$msg" "$@" >&2
+	exit 1
+}
+
 LONG_OPTS="help,version,layout:,title:,title-separator:"
 
 argv=$(getopt -l "$LONG_OPTS" -- 'hVl:t:' "$@") || { usage ; exit 1 ; }
@@ -68,21 +81,18 @@ done
 SRC=$(readlink -f $1)
 DST=$(readlink -f $2)
 
-[[ -d "$SRC" ]] || { echo "Invalid source directory" ; exit 1 ; }
-[[ -d "$DST" ]] || { echo "Invalid destination directory" ; exit 1 ; }
+[[ -d "$SRC" ]] || { fatal "Invalid source directory" ; }
+[[ -d "$DST" ]] || { fatal "Invalid destination directory" ; }
 
 if [[ -f "$LAYOUT" ]]; then
 	LCONTENT=$(cat $LAYOUT)
 
 	if [[ ! "$LCONTENT" =~ "{{ CONTENT }}" ]]; then
-		echo "The layout file must contain a \"{{ CONTENT }}\" variable"
-		exit 1
+		fatal "The layout file must contain a \"{{ CONTENT }}\" variable"
 	fi
 
 	if [[ (-n "$TITLE") && (! "$LCONTENT" =~ "{{ TITLE }}") ]]; then
-		echo -n "A title was specified, so the layout must"
-		echo "contain a \"{{ TITLE }}\" variable"
-		exit 1
+		fatal "A title was specified, so the layout must contain a \"{{ TITLE }}\" variable"
 	fi
 fi
 
