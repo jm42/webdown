@@ -25,16 +25,14 @@ if [[ ! -x /usr/bin/sundown ]]; then
 	exit 1
 fi
 
-# version {{{
 version()
 {
 	echo "${0##*/} v$VERSION"
 }
-# }}}
 
 usage()
 {
-	cat >&2 << EOF
+	cat << EOF
 usage: ${0##*/} [options] <source> <destination>
 
 options:
@@ -44,12 +42,11 @@ options:
   -h, --help                           Display this message
   -V, --version                        Print version and exit
 EOF
-	exit ${1:-1}
 }
 
 LONG_OPTS="help,version,layout:,title:,title-separator:"
 
-argv=$(getopt -l "$LONG_OPTS" -- 'hVl:t:' "$@") || usage
+argv=$(getopt -l "$LONG_OPTS" -- 'hVl:t:' "$@") || { usage ; exit 1 ; }
 eval set -- "$argv"
 
 while true ; do
@@ -58,21 +55,21 @@ while true ; do
 		-t|--title)              TITLE="$2" ; shift 2 ;;
 		   --title-separator)    TITLE_SEPARATOR="$2" ; shift 2 ;;
 
-		-h|--help)               usage 0 2>&1 ;;
+		-h|--help)               usage ; exit ;;
 		-V|--version)            version ; exit ;;
 
 		--)                      shift ; break ;;
-		*)                       usage ;;
+		*)                       usage ; exit 1 ;;
 	esac
 done
 
-[[ $# -eq 2 ]] || usage
+[[ $# -eq 2 ]] || { usage ; exit 1 ; }
 
 SRC=$(readlink -f $1)
 DST=$(readlink -f $2)
 
-[[ -d "$SRC" ]] || (echo "Invalid source directory" ; exit 1)
-[[ -d "$DST" ]] || (echo "Invalid destination directory" ; exit 1)
+[[ -d "$SRC" ]] || { echo "Invalid source directory" ; exit 1 ; }
+[[ -d "$DST" ]] || { echo "Invalid destination directory" ; exit 1 ; }
 
 if [[ -f "$LAYOUT" ]]; then
 	LCONTENT=$(cat $LAYOUT)
