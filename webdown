@@ -73,6 +73,11 @@ DST=$(readlink -f $2)
 
 if [[ -f "$LAYOUT" ]]; then
 	LCONTENT=$(cat $LAYOUT)
+
+	if [[ ! "$LCONTENT" =~ "{{ CONTENT }}" ]]; then
+		echo "The layout file must contain a \"{{ CONTENT }}\" variable"
+		exit 1
+	fi
 fi
 
 for SFILE in $(find "$SRC" -name '*.markdown' -type f); do
