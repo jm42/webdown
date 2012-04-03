@@ -78,6 +78,12 @@ if [[ -f "$LAYOUT" ]]; then
 		echo "The layout file must contain a \"{{ CONTENT }}\" variable"
 		exit 1
 	fi
+
+	if [[ (-n "$TITLE") && (! "$LCONTENT" =~ "{{ TITLE }}") ]]; then
+		echo -n "A title was specified, so the layout must"
+		echo "contain a \"{{ TITLE }}\" variable"
+		exit 1
+	fi
 fi
 
 for SFILE in $(find "$SRC" -name '*.markdown' -type f); do
