@@ -12,14 +12,14 @@
 #
 # History
 # -------
+# 2012/04/09: v0.2
+#  * Remove title and title-separator
 # 2012/03/22: First version
 #
 
-VERSION=0.1
+VERSION=0.2
 QUIET=0
 LAYOUT=
-TITLE=
-TITLE_SEPARATOR="|"
 
 if [[ ! -x /usr/bin/sundown ]]; then
 	echo "Please install 'sundown' to use ${0##*/}"
@@ -38,8 +38,6 @@ usage: ${0##*/} [options] <source> <destination>
 
 options:
   -l, --layout <file>                  Layout for each generated page
-  -t, --title <title>                  Page title
-      --title-separator <separator>    Title separator
   -q, --quiet                          Do not display any message
   -h, --help                           Display this message
   -V, --version                        Print version and exit
@@ -61,8 +59,8 @@ fatal()
 	exit 1
 }
 
-SHORT_OPTS="qhVl:t:"
-LONG_OPTS="quiet,help,version,layout:,title:,title-separator:"
+SHORT_OPTS="qhVl:"
+LONG_OPTS="quiet,help,version,layout:"
 
 argv=$(getopt -l "$LONG_OPTS" -- "$SHORT_OPTS" "$@") || { usage ; exit 1 ; }
 eval set -- "$argv"
@@ -70,8 +68,6 @@ eval set -- "$argv"
 while true ; do
 	case "$1" in
 		-l|--layout)             LAYOUT="$2" ; shift 2 ;;
-		-t|--title)              TITLE="$2" ; shift 2 ;;
-		   --title-separator)    TITLE_SEPARATOR="$2" ; shift 2 ;;
 
 		-q|--quiet)              QUIET=1 ; shift ;;
 		-h|--help)               usage ; exit ;;
@@ -96,10 +92,6 @@ if [[ -f "$LAYOUT" ]]; then
 	if [[ ! "$LCONTENT" =~ "{{ CONTENT }}" ]]; then
 		fatal "The layout file must contain a \"{{ CONTENT }}\" variable"
 	fi
-
-	if [[ (-n "$TITLE") && (! "$LCONTENT" =~ "{{ TITLE }}") ]]; then
-		fatal "A title was specified, so the layout must contain a \"{{ TITLE }}\" variable"
-	fi
 fi
 
 for SFILE in $(find "$SRC" -name '*.markdown' -type f); do
@@ -110,16 +102,10 @@ for SFILE in $(find "$SRC" -name '*.markdown' -type f); do
 
 	if [[ -n "$LCONTENT" ]]; then
 		MARKDOWN=$(sundown $SFILE)
+		CTITLE=$(head -n1 "$SFILE")
 
 		CONTENT=$LCONTENT
 		CONTENT=${CONTENT/\{\{ CONTENT \}\}/$MARKDOWN}
-
-		CTITLE=$(head -n1 "$SFILE")
-
-		if [[ (-n "$TITLE") && ("$CTITLE" != "$TITLE") ]]; then
-			CTITLE="$CTITLE $TITLE_SEPARATOR $TITLE"
-		fi
-
 		CONTENT=${CONTENT/\{\{ TITLE \}\}/$CTITLE}
 	else
 		CONTENT=$(sundown $SFILE)

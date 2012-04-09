@@ -15,25 +15,7 @@ files in the \fIsource\fR directory.
 Use the HTML \fIfile\fR as layout. The current variables will be replaced:
 
   \fB{{ CONTENT }}\fR - The HTML of the markdown convertion
-  \fB{{ TITLE }}\fR   - The page title (see \fB-t\fR parameter)
-
-.IP "\fB-t, --title \fItitle\fR"
-Specifies the global \fItitle\fR to be used. It will replace the layout
-variable \fB{{ TITLE }}\fR with the format:
-
-    \fB{{ CURRENT_TITLE }} {{ SEPARATOR }} {{ GLOBAL_TITLE }}\fR
-
-If this parameter is not specified, no separator will be used, and the layout
-variable \fB{{ TITLE }}\fR will be replace with the title of the current
-procesing file.
-
-.IP "\fB--title-separator \fIseparator\fR"
-Separate the procesing page title and the given title by the parameter
-\fB-t\fR with \fIseparator\fR. Note that the separator is wrapped with one
-space of each side.
-
-If no one is specified, the charecter "|" (without quotes) will be used as
-title separator.
+  \fB{{ TITLE }}\fR   - The page title
 
 .IP "\fB-q, --quiet\fR"
 Do not print any message.
