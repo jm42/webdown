@@ -1,6 +1,9 @@
 #!/usr/bin/env sh
 #
 # webdown -- static website generator from markdown sources
+#          .    .
+# .    , _ |_  _| _ .    ,._
+#  \/\/ (/,[_)(_](_) \/\/ [ )
 #
 # Copyright (C) 2012 Juan M Martínez
 #
