@@ -39,7 +39,7 @@ For more information checkout the manual page: `man webdown`.
 License
 -------
 
-Copyright (C) 2012 Juan M Martínez
+Copyright (C) 2012-2013 Juan M Martínez
 
 This program is free software. It comes without any warranty, to the extent
 permitted by applicable law. You can redistribute it and/or modify it under
